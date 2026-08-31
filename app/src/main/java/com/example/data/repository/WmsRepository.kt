@@ -512,6 +512,12 @@ class WmsRepository private constructor(private val context: Context) {
             }
         }
 
+        // DEDUCT stock immediately from warehouse
+        val validItems = items.filter { it.qty > 0 }
+        validItems.forEach { item ->
+            updateStock(warehouseId, item.sku, -item.qty)
+        }
+
         val nextNum = 1000 + _outputOrders.value.size + 1
         val orderId = "OUT-$nextNum"
         val timestamp = getCurrentTimestamp()
@@ -523,11 +529,12 @@ class WmsRepository private constructor(private val context: Context) {
             timestamp = timestamp,
             warehouseId = warehouseId,
             customerId = customerId,
-            items = items.filter { it.qty > 0 },
+            items = validItems,
             status = OutputOrderStatus.PENDING,
             createdBy = createdBy,
             history = listOf(
-                TimelineEvent(getCurrentTimeOnly(), "Tạo đơn xuất kho", "Xuất từ $warehouse cho $customer", createdBy)
+                TimelineEvent(getCurrentTimeOnly(), "Tạo đơn xuất kho", "Xuất từ $warehouse cho $customer", createdBy),
+                TimelineEvent(getCurrentTimeOnly(), "Đã trừ tồn kho", "Hệ thống đã trừ hàng tại $warehouse ngay khi lập đơn.", "Hệ thống")
             )
         )
         val updated = listOf(newOrder) + _outputOrders.value
@@ -552,13 +559,8 @@ class WmsRepository private constructor(private val context: Context) {
             }
         }
 
-        // Deduct inventory from source warehouse
-        order.items.forEach { item ->
-            updateStock(order.warehouseId, item.sku, -item.qty)
-        }
-
         val warehouse = _warehouses.value.find { it.id == order.warehouseId }?.name ?: order.warehouseId
-        val newEvent = TimelineEvent(getCurrentTimeOnly(), "Xác nhận xuất hàng", "Đã xuất kho thành công từ $warehouse. Tồn kho đã trừ.", confirmedBy)
+        val newEvent = TimelineEvent(getCurrentTimeOnly(), "Xác nhận xuất hàng", "Đã xác nhận xuất hàng thành công từ $warehouse.", confirmedBy)
 
         val updated = _outputOrders.value.map {
             if (it.id == orderId) {
@@ -578,7 +580,13 @@ class WmsRepository private constructor(private val context: Context) {
             return Result.failure(Exception("Chỉ có thể hủy đơn hàng đang Chờ xử lý!"))
         }
 
-        val newEvent = TimelineEvent(getCurrentTimeOnly(), "Hủy đơn xuất kho", "Đơn hàng đã bị hủy.", cancelledBy)
+        // RESTORE stock back to warehouse
+        order.items.forEach { item ->
+            updateStock(order.warehouseId, item.sku, item.qty)
+        }
+
+        val warehouse = _warehouses.value.find { it.id == order.warehouseId }?.name ?: order.warehouseId
+        val newEvent = TimelineEvent(getCurrentTimeOnly(), "Hủy đơn xuất kho", "Đơn hàng đã bị hủy. Đã hoàn lại tồn kho cho $warehouse.", cancelledBy)
         val updated = _outputOrders.value.map {
             if (it.id == orderId) {
                 it.copy(status = OutputOrderStatus.CANCELLED, history = it.history + newEvent)

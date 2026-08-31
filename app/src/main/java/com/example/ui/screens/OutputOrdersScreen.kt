@@ -91,8 +91,8 @@ fun OutputOrdersScreen(
     if (orderToConfirm != null) {
         AlertDialog(
             onDismissRequest = { orderToConfirm = null },
-            title = { Text("Xác nhận xuất hàng khỏi kho?", fontWeight = FontWeight.Bold) },
-            text = { Text("Hệ thống sẽ trừ số lượng sản phẩm trong đơn $orderToConfirm khỏi tồn kho thực tế của kho xuất.") },
+            title = { Text("Xác nhận đã xuất hàng thành công?", fontWeight = FontWeight.Bold) },
+            text = { Text("Đơn hàng $orderToConfirm sẽ được chuyển sang trạng thái ĐÃ XUẤT. Tồn kho thực tế đã được trừ ngay khi bạn tạo đơn.") },
             confirmButton = {
                 Button(
                     onClick = {
@@ -116,8 +116,8 @@ fun OutputOrdersScreen(
     if (orderToCancel != null) {
         AlertDialog(
             onDismissRequest = { orderToCancel = null },
-            title = { Text("Xác nhận hủy đơn xuất?", fontWeight = FontWeight.Bold) },
-            text = { Text("Bạn có chắc muốn hủy đơn xuất $orderToCancel không?") },
+            title = { Text("Xác nhận hủy đơn xuất & Hoàn tồn?", fontWeight = FontWeight.Bold) },
+            text = { Text("Khi hủy đơn $orderToCancel, hệ thống sẽ tự động cộng hoàn lại số lượng sản phẩm vào tồn kho của kho xuất. Bạn có chắc chắn?") },
             confirmButton = {
                 Button(
                     onClick = {
@@ -390,7 +390,12 @@ fun OutputOrdersScreen(
                         ) {
                             Icon(Icons.Default.ArrowOutward, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Tạo đơn xuất", fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "Tạo đơn xuất & Trừ tồn kho", 
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
+                            )
                         }
                     }
                 }
