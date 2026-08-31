@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -127,56 +128,46 @@ fun DriversVehiclesScreen(
                         }
                     }
 
-                    Row(
+                    OutlinedTextField(
+                        value = driverId,
+                        onValueChange = { if (!isEditMode) driverId = it },
+                        label = { Text("Mã kho xe / Nhân viên", maxLines = 1, modifier = Modifier.basicMarquee()) },
+                        placeholder = { Text("XE-01, XE-02, XE-03...") },
+                        enabled = !isEditMode,
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = driverId,
-                            onValueChange = { if (!isEditMode) driverId = it },
-                            label = { Text("Mã kho xe / Nhân viên") },
-                            placeholder = { Text("XE-01, XE-02, XE-03...") },
-                            enabled = !isEditMode,
-                            singleLine = true,
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
-                        OutlinedTextField(
-                            value = driverName,
-                            onValueChange = { driverName = it },
-                            label = { Text("Tên nhân viên lái xe") },
-                            placeholder = { Text("Trần Văn Nam, Nguyễn Văn Cường...") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1.5f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                    }
-
-                    Row(
+                    OutlinedTextField(
+                        value = driverName,
+                        onValueChange = { driverName = it },
+                        label = { Text("Tên nhân viên lái xe", maxLines = 1, modifier = Modifier.basicMarquee()) },
+                        placeholder = { Text("Trần Văn Nam, Nguyễn Văn Cường...") },
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = driverPlate,
-                            onValueChange = { driverPlate = it },
-                            label = { Text("Biển số xe") },
-                            placeholder = { Text("29H-123.45, 30H-555.66...") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
-                        OutlinedTextField(
-                            value = driverPhone,
-                            onValueChange = { driverPhone = it },
-                            label = { Text("Số điện thoại") },
-                            placeholder = { Text("0901234567...") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                    }
+                    OutlinedTextField(
+                        value = driverPlate,
+                        onValueChange = { driverPlate = it },
+                        label = { Text("Biển số xe", maxLines = 1, modifier = Modifier.basicMarquee()) },
+                        placeholder = { Text("29H-123.45, 30H-555.66...") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = driverPhone,
+                        onValueChange = { driverPhone = it },
+                        label = { Text("Số điện thoại", maxLines = 1, modifier = Modifier.basicMarquee()) },
+                        placeholder = { Text("0901234567...") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
                     Button(
                         onClick = {
@@ -196,11 +187,16 @@ fun DriversVehiclesScreen(
                         enabled = driverId.isNotBlank() && driverName.isNotBlank() && driverPlate.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
                         shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (isEditMode) "Cập nhật nhân viên & xe" else "Lưu nhân viên & tạo kho xe", fontWeight = FontWeight.Bold)
+                        Text(
+                            text = if (isEditMode) "Cập nhật nhân viên & xe" else "Lưu nhân viên & tạo kho xe", 
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
                     }
                 }
             }
@@ -217,7 +213,9 @@ fun DriversVehiclesScreen(
                     text = "DANH SÁCH NHÂN VIÊN & XE VẬN CHUYỂN (${filteredDrivers.size})",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Slate700
+                    color = Slate700,
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth().basicMarquee()
                 )
             }
         }
@@ -274,6 +272,7 @@ fun DriversVehiclesScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Row(
+                                modifier = Modifier.weight(1f),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
@@ -281,7 +280,9 @@ fun DriversVehiclesScreen(
                                     text = driver.id,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = PrimaryBlue
+                                    color = PrimaryBlue,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                                 StatusBadge(
                                     text = "VẬN CHUYỂN",
@@ -324,14 +325,35 @@ fun DriversVehiclesScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically, 
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
                                 Icon(Icons.Outlined.Person, contentDescription = null, tint = Slate500, modifier = Modifier.size(16.dp))
-                                Text(text = driver.name, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = Slate900)
+                                Text(
+                                    text = driver.name, 
+                                    fontSize = 13.sp, 
+                                    fontWeight = FontWeight.SemiBold, 
+                                    color = Slate900,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
                             }
                             if (driver.phone.isNotBlank()) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Row(
+                                    modifier = Modifier.weight(0.8f, fill = false),
+                                    verticalAlignment = Alignment.CenterVertically, 
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
                                     Icon(Icons.Outlined.Phone, contentDescription = null, tint = Slate400, modifier = Modifier.size(14.dp))
-                                    Text(text = driver.phone, fontSize = 12.sp, color = Slate600)
+                                    Text(
+                                        text = driver.phone, 
+                                        fontSize = 12.sp, 
+                                        color = Slate600,
+                                        maxLines = 1,
+                                        modifier = Modifier.basicMarquee()
+                                    )
                                 }
                             }
                         }
@@ -365,7 +387,9 @@ fun DriversVehiclesScreen(
                                         text = summaryText,
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = PrimaryBlue
+                                        color = PrimaryBlue,
+                                        maxLines = 1,
+                                        modifier = Modifier.basicMarquee()
                                     )
                                 }
                             }
