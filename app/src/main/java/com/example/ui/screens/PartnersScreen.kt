@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -146,36 +147,44 @@ fun PartnersScreen(
                         )
                     }
 
-                    Row(
+                    OutlinedTextField(
+                        value = partnerPhone,
+                        onValueChange = { partnerPhone = it },
+                        label = { Text("Số điện thoại") },
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Type Selection Segment
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Phân loại:", fontSize = 11.sp, color = Slate600, fontWeight = FontWeight.SemiBold)
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                FilterChip(
-                                    selected = partnerType == PartnerType.SUPPLIER,
-                                    onClick = { partnerType = PartnerType.SUPPLIER },
-                                    label = { Text("Nhà cung cấp", fontSize = 11.sp) }
-                                )
-                                FilterChip(
-                                    selected = partnerType == PartnerType.CUSTOMER,
-                                    onClick = { partnerType = PartnerType.CUSTOMER },
-                                    label = { Text("Khách hàng", fontSize = 11.sp) }
-                                )
-                            }
-                        }
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
-                        OutlinedTextField(
-                            value = partnerPhone,
-                            onValueChange = { partnerPhone = it },
-                            label = { Text("Số điện thoại") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
+                    // Type Selection (Moved to its own row for full width to prevent vertical wrapping)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text("Phân loại đối tác:", fontSize = 12.sp, color = Slate600, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            FilterChip(
+                                modifier = Modifier.weight(1f),
+                                selected = partnerType == PartnerType.SUPPLIER,
+                                onClick = { partnerType = PartnerType.SUPPLIER },
+                                label = { 
+                                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        Text("Nhà cung cấp", fontSize = 12.sp, maxLines = 1) 
+                                    }
+                                }
+                            )
+                            FilterChip(
+                                modifier = Modifier.weight(1f),
+                                selected = partnerType == PartnerType.CUSTOMER,
+                                onClick = { partnerType = PartnerType.CUSTOMER },
+                                label = { 
+                                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        Text("Khách hàng", fontSize = 12.sp, maxLines = 1) 
+                                    }
+                                }
+                            )
+                        }
                     }
 
                     OutlinedTextField(
@@ -217,62 +226,63 @@ fun PartnersScreen(
             }
         }
 
-        // Table & Search section
+        // Table & Search section (Combined to prevent vertical wrapping of chips)
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "DANH SÁCH ĐỐI TÁC & KHÁCH HÀNG (${filteredPartners.size})",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Slate700
-                )
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "DANH SÁCH ĐỐI TÁC (${filteredPartners.size})",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Slate700,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f).basicMarquee()
+                    )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    FilterChip(
-                        selected = filterType == null,
-                        onClick = { filterType = null },
-                        label = { Text("Tất cả", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterType == PartnerType.SUPPLIER,
-                        onClick = { filterType = PartnerType.SUPPLIER },
-                        label = { Text("Nhà cung cấp", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterType == PartnerType.CUSTOMER,
-                        onClick = { filterType = PartnerType.CUSTOMER },
-                        label = { Text("Khách hàng", fontSize = 11.sp) }
-                    )
-                }
-            }
-        }
-
-        // Search Input
-        item {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Tìm theo mã, tên đơn vị, SĐT hoặc địa chỉ...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Xóa tìm kiếm", tint = Slate400)
-                        }
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FilterChip(
+                            selected = filterType == null,
+                            onClick = { filterType = null },
+                            label = { Text("Tất cả", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterType == PartnerType.SUPPLIER,
+                            onClick = { filterType = PartnerType.SUPPLIER },
+                            label = { Text("Nhà cung cấp", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterType == PartnerType.CUSTOMER,
+                            onClick = { filterType = PartnerType.CUSTOMER },
+                            label = { Text("Khách hàng", fontSize = 11.sp) }
+                        )
                     }
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
+                }
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Tìm theo mã, tên đơn vị, SĐT hoặc địa chỉ...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Xóa tìm kiếm", tint = Slate400)
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
                 )
-            )
+            }
         }
 
         // List of Partners
@@ -326,20 +336,33 @@ fun PartnersScreen(
                                 text = partner.name,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Slate900
+                                color = Slate900,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
                             )
                             Spacer(modifier = Modifier.height(2.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
                                 if (partner.phone.isNotBlank()) {
-                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Row(
+                                        modifier = Modifier.weight(1f),
+                                        verticalAlignment = Alignment.CenterVertically, 
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
                                         Icon(Icons.Outlined.Phone, contentDescription = null, tint = Slate400, modifier = Modifier.size(14.dp))
-                                        Text(text = partner.phone, fontSize = 11.sp, color = Slate600)
+                                        Text(text = partner.phone, fontSize = 11.sp, color = Slate600, maxLines = 1, modifier = Modifier.basicMarquee())
                                     }
                                 }
                                 if (partner.address.isNotBlank()) {
-                                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Row(
+                                        modifier = Modifier.weight(1.5f),
+                                        verticalAlignment = Alignment.CenterVertically, 
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
                                         Icon(Icons.Outlined.LocationOn, contentDescription = null, tint = Slate400, modifier = Modifier.size(14.dp))
-                                        Text(text = partner.address, fontSize = 11.sp, color = Slate600)
+                                        Text(text = partner.address, fontSize = 11.sp, color = Slate600, maxLines = 1, modifier = Modifier.basicMarquee())
                                     }
                                 }
                             }
