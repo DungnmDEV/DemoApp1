@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -312,6 +313,7 @@ fun TransfersScreen(
                                         value = "${item.sku} - ${curProd?.name ?: ""}",
                                         onValueChange = {},
                                         readOnly = true,
+                                        singleLine = true,
                                         label = { Text("Sản phẩm #${index + 1}") },
                                         supportingText = {
                                             Text(
@@ -339,7 +341,12 @@ fun TransfersScreen(
                                                         modifier = Modifier.fillMaxWidth(),
                                                         horizontalArrangement = Arrangement.SpaceBetween
                                                     ) {
-                                                        Text("${prod.sku} - ${prod.name}", fontSize = 12.sp)
+                                                        Text(
+                                                            text = "${prod.sku} - ${prod.name}",
+                                                            fontSize = 12.sp,
+                                                            maxLines = 1,
+                                                            modifier = Modifier.basicMarquee()
+                                                        )
                                                         Text("Tồn: $stock", fontSize = 11.sp, color = PrimaryBlue, fontWeight = FontWeight.Bold)
                                                     }
                                                 },
@@ -426,67 +433,69 @@ fun TransfersScreen(
             }
         }
 
-        // Section header & Filters
+        // Section header & Filters + Search bar (Combined to reduce gap)
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "DANH SÁCH PHIẾU LUÂN CHUYỂN (${filteredTransfers.size})",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Slate700
-                )
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "DANH SÁCH PHIẾU LUÂN CHUYỂN (${filteredTransfers.size})",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Slate700
+                    )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    FilterChip(
-                        selected = filterStatus == null,
-                        onClick = { filterStatus = null },
-                        label = { Text("Tất cả", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == TransferStatus.PENDING,
-                        onClick = { filterStatus = TransferStatus.PENDING },
-                        label = { Text("Đang chuyển", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == TransferStatus.COMPLETED,
-                        onClick = { filterStatus = TransferStatus.COMPLETED },
-                        label = { Text("Hoàn thành", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == TransferStatus.CANCELLED,
-                        onClick = { filterStatus = TransferStatus.CANCELLED },
-                        label = { Text("Đã hủy", fontSize = 11.sp) }
-                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FilterChip(
+                            selected = filterStatus == null,
+                            onClick = { filterStatus = null },
+                            label = { Text("Tất cả", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == TransferStatus.PENDING,
+                            onClick = { filterStatus = TransferStatus.PENDING },
+                            label = { Text("Đang chuyển", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == TransferStatus.COMPLETED,
+                            onClick = { filterStatus = TransferStatus.COMPLETED },
+                            label = { Text("Hoàn thành", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == TransferStatus.CANCELLED,
+                            onClick = { filterStatus = TransferStatus.CANCELLED },
+                            label = { Text("Đã hủy", fontSize = 11.sp) }
+                        )
+                    }
                 }
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Tìm theo mã phiếu, kho nguồn, kho đích...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
             }
         }
 
-        item {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Tìm theo mã phiếu, kho nguồn, kho đích...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
-                        }
-                    }
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                )
-            )
-        }
+        // Removed separate search bar item
 
         // Transfers List
         if (filteredTransfers.isEmpty()) {
@@ -585,7 +594,9 @@ fun TransfersScreen(
                                     text = "Sản phẩm: $itemsSummary",
                                     fontSize = 11.sp,
                                     color = Slate700,
-                                    fontWeight = FontWeight.Medium
+                                    fontWeight = FontWeight.Medium,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                         }

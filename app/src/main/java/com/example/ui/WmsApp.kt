@@ -129,7 +129,9 @@ fun WmsApp(
             },
             bottomBar = {
                 Surface(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding(),
                     color = Color.White,
                     shadowElevation = 8.dp,
                     border = androidx.compose.foundation.BorderStroke(1.dp, Slate200)
@@ -137,7 +139,7 @@ fun WmsApp(
                     NavigationBar(
                         containerColor = Color.White,
                         tonalElevation = 0.dp,
-                        modifier = Modifier.height(64.dp)
+                        modifier = Modifier.wrapContentHeight()
                     ) {
                         val bottomNavItems = listOf(
                             BottomNavDestination(WmsScreen.DASHBOARD, "Tổng quan", Icons.Outlined.Dashboard),

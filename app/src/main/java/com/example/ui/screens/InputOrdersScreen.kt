@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -268,6 +269,7 @@ fun InputOrdersScreen(
                                         value = "${item.sku} - ${curProd?.name ?: ""}",
                                         onValueChange = {},
                                         readOnly = true,
+                                        singleLine = true,
                                         label = { Text("Sản phẩm #${index + 1}") },
                                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = itemSkuDropdown) },
                                         modifier = Modifier
@@ -282,7 +284,14 @@ fun InputOrdersScreen(
                                     ) {
                                         products.forEach { prod ->
                                             DropdownMenuItem(
-                                                text = { Text("${prod.sku} - ${prod.name} (${prod.unit})", fontSize = 12.sp) },
+                                                text = {
+                                                    Text(
+                                                        text = "${prod.sku} - ${prod.name} (${prod.unit})",
+                                                        fontSize = 12.sp,
+                                                        maxLines = 1,
+                                                        modifier = Modifier.basicMarquee()
+                                                    )
+                                                },
                                                 onClick = {
                                                     val newList = orderItems.toMutableList()
                                                     newList[index] = item.copy(sku = prod.sku)
@@ -360,67 +369,69 @@ fun InputOrdersScreen(
             }
         }
 
-        // Section header & Filters
+        // Section header & Filters + Search bar (Combined to reduce gap)
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "DANH SÁCH ĐƠN NHẬP HÀNG (${filteredOrders.size})",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Slate700
-                )
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "DANH SÁCH ĐƠN NHẬP HÀNG (${filteredOrders.size})",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Slate700
+                    )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    FilterChip(
-                        selected = filterStatus == null,
-                        onClick = { filterStatus = null },
-                        label = { Text("Tất cả", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == InputOrderStatus.PENDING,
-                        onClick = { filterStatus = InputOrderStatus.PENDING },
-                        label = { Text("Chờ nhận", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == InputOrderStatus.RECEIVED,
-                        onClick = { filterStatus = InputOrderStatus.RECEIVED },
-                        label = { Text("Đã nhận", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == InputOrderStatus.CANCELLED,
-                        onClick = { filterStatus = InputOrderStatus.CANCELLED },
-                        label = { Text("Đã hủy", fontSize = 11.sp) }
-                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FilterChip(
+                            selected = filterStatus == null,
+                            onClick = { filterStatus = null },
+                            label = { Text("Tất cả", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == InputOrderStatus.PENDING,
+                            onClick = { filterStatus = InputOrderStatus.PENDING },
+                            label = { Text("Chờ nhận", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == InputOrderStatus.RECEIVED,
+                            onClick = { filterStatus = InputOrderStatus.RECEIVED },
+                            label = { Text("Đã nhận", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == InputOrderStatus.CANCELLED,
+                            onClick = { filterStatus = InputOrderStatus.CANCELLED },
+                            label = { Text("Đã hủy", fontSize = 11.sp) }
+                        )
+                    }
                 }
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Tìm theo mã đơn, nhà cung cấp, kho nhận...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
             }
         }
 
-        item {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Tìm theo mã đơn, nhà cung cấp, kho nhận...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
-                        }
-                    }
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                )
-            )
-        }
+        // Removed the separate search bar item to eliminate the large gap caused by spacedBy(16.dp)
 
         // Orders List
         if (filteredOrders.isEmpty()) {
@@ -518,7 +529,9 @@ fun InputOrdersScreen(
                                     text = "Sản phẩm: $itemsSummary",
                                     fontSize = 11.sp,
                                     color = Slate700,
-                                    fontWeight = FontWeight.Medium
+                                    fontWeight = FontWeight.Medium,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                         }

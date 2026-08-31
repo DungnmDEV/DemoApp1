@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -274,6 +275,7 @@ fun OutputOrdersScreen(
                                         value = "${item.sku} - ${curProd?.name ?: ""}",
                                         onValueChange = {},
                                         readOnly = true,
+                                        singleLine = true,
                                         label = { Text("Sản phẩm #${index + 1}") },
                                         supportingText = {
                                             Text(
@@ -301,7 +303,12 @@ fun OutputOrdersScreen(
                                                         modifier = Modifier.fillMaxWidth(),
                                                         horizontalArrangement = Arrangement.SpaceBetween
                                                     ) {
-                                                        Text("${prod.sku} - ${prod.name}", fontSize = 12.sp)
+                                                        Text(
+                                                            text = "${prod.sku} - ${prod.name}",
+                                                            fontSize = 12.sp,
+                                                            maxLines = 1,
+                                                            modifier = Modifier.basicMarquee()
+                                                        )
                                                         Text("Tồn: $stock", fontSize = 11.sp, color = PrimaryBlue, fontWeight = FontWeight.Bold)
                                                     }
                                                 },
@@ -388,67 +395,69 @@ fun OutputOrdersScreen(
             }
         }
 
-        // Section header & Filters
+        // Section header & Filters + Search Bar (Combined to reduce gap)
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "DANH SÁCH ĐƠN XUẤT HÀNG (${filteredOrders.size})",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Slate700
-                )
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "DANH SÁCH ĐƠN XUẤT HÀNG (${filteredOrders.size})",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Slate700
+                    )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    FilterChip(
-                        selected = filterStatus == null,
-                        onClick = { filterStatus = null },
-                        label = { Text("Tất cả", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == OutputOrderStatus.PENDING,
-                        onClick = { filterStatus = OutputOrderStatus.PENDING },
-                        label = { Text("Chờ xuất", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == OutputOrderStatus.DELIVERED,
-                        onClick = { filterStatus = OutputOrderStatus.DELIVERED },
-                        label = { Text("Đã xuất", fontSize = 11.sp) }
-                    )
-                    FilterChip(
-                        selected = filterStatus == OutputOrderStatus.CANCELLED,
-                        onClick = { filterStatus = OutputOrderStatus.CANCELLED },
-                        label = { Text("Đã hủy", fontSize = 11.sp) }
-                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FilterChip(
+                            selected = filterStatus == null,
+                            onClick = { filterStatus = null },
+                            label = { Text("Tất cả", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == OutputOrderStatus.PENDING,
+                            onClick = { filterStatus = OutputOrderStatus.PENDING },
+                            label = { Text("Chờ xuất", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == OutputOrderStatus.DELIVERED,
+                            onClick = { filterStatus = OutputOrderStatus.DELIVERED },
+                            label = { Text("Đã xuất", fontSize = 11.sp) }
+                        )
+                        FilterChip(
+                            selected = filterStatus == OutputOrderStatus.CANCELLED,
+                            onClick = { filterStatus = OutputOrderStatus.CANCELLED },
+                            label = { Text("Đã hủy", fontSize = 11.sp) }
+                        )
+                    }
                 }
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Tìm theo mã đơn, khách hàng, kho xuất...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
             }
         }
 
-        item {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Tìm theo mã đơn, khách hàng, kho xuất...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
-                        }
-                    }
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                )
-            )
-        }
+        // Removed the separate search bar item to eliminate the large gap
 
         // Orders List
         if (filteredOrders.isEmpty()) {
@@ -546,7 +555,9 @@ fun OutputOrdersScreen(
                                     text = "Sản phẩm: $itemsSummary",
                                     fontSize = 11.sp,
                                     color = Slate700,
-                                    fontWeight = FontWeight.Medium
+                                    fontWeight = FontWeight.Medium,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                         }
