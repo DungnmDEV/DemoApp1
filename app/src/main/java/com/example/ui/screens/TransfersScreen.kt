@@ -214,6 +214,7 @@ fun TransfersScreen(
                                     value = if (currentWh != null) "${currentWh.id} - ${currentWh.name}" else "Chọn kho nguồn...",
                                     onValueChange = {},
                                     readOnly = true,
+                                    singleLine = true,
                                     enabled = !isWarehouseFixed,
                                     label = { Text("Kho xuất (Nguồn)") },
                                     trailingIcon = { if (!isWarehouseFixed) ExposedDropdownMenuDefaults.TrailingIcon(expanded = fromDropdownExpanded) },
@@ -256,6 +257,7 @@ fun TransfersScreen(
                                     value = if (currentWh != null) "${currentWh.id} - ${currentWh.name}" else "Chọn kho đích...",
                                     onValueChange = {},
                                     readOnly = true,
+                                    singleLine = true,
                                     label = { Text("Kho nhận (Đích)") },
                                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = toDropdownExpanded) },
                                     modifier = Modifier

@@ -179,6 +179,7 @@ fun OutputOrdersScreen(
                                     value = if (currentWh != null) "${currentWh.id} - ${currentWh.name}" else "Chọn kho xuất...",
                                     onValueChange = {},
                                     readOnly = true,
+                                    singleLine = true,
                                     enabled = !isWarehouseFixed,
                                     label = { Text("Kho xuất hàng") },
                                     trailingIcon = { if (!isWarehouseFixed) ExposedDropdownMenuDefaults.TrailingIcon(expanded = warehouseDropdownExpanded) },
@@ -218,6 +219,7 @@ fun OutputOrdersScreen(
                                     value = if (currentCust != null) "${currentCust.id} - ${currentCust.name}" else "Chọn khách hàng...",
                                     onValueChange = {},
                                     readOnly = true,
+                                    singleLine = true,
                                     label = { Text("Khách hàng nhận hàng") },
                                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = customerDropdownExpanded) },
                                     modifier = Modifier

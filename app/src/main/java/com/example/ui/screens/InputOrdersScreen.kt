@@ -177,6 +177,7 @@ fun InputOrdersScreen(
                                     value = if (currentSupp != null) "${currentSupp.id} - ${currentSupp.name}" else "Chọn nhà cung cấp...",
                                     onValueChange = {},
                                     readOnly = true,
+                                    singleLine = true,
                                     label = { Text("Nhà cung cấp") },
                                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = supplierDropdownExpanded) },
                                     modifier = Modifier
@@ -214,6 +215,7 @@ fun InputOrdersScreen(
                                     value = if (currentWh != null) "${currentWh.id} - ${currentWh.name}" else "Chọn kho nhập...",
                                     onValueChange = {},
                                     readOnly = true,
+                                    singleLine = true,
                                     enabled = !isWarehouseFixed,
                                     label = { Text("Kho đích nhập hàng") },
                                     trailingIcon = { if (!isWarehouseFixed) ExposedDropdownMenuDefaults.TrailingIcon(expanded = warehouseDropdownExpanded) },
