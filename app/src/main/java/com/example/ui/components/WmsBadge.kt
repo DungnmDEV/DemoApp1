@@ -34,7 +34,8 @@ fun StatusBadge(
             color = textColor,
             fontSize = 9.sp,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 0.4.sp
+            letterSpacing = 0.4.sp,
+            maxLines = 1
         )
     }
 }

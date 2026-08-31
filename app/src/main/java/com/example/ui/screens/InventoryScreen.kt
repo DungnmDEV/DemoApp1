@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -77,19 +78,25 @@ fun InventoryScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "Báo cáo tồn kho theo thời gian thực",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Slate900
+                                color = Slate900,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
                             )
                             Text(
-                                text = "Tổng số lượng hiển thị: $totalItemsCount sản phẩm (${filteredInventory.size} bản ghi)",
+                                text = "Tổng: $totalItemsCount SP (${filteredInventory.size} bản ghi)",
                                 fontSize = 12.sp,
-                                color = Slate500
+                                color = Slate500,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         Surface(
                             color = PrimaryBlueLight,
@@ -114,13 +121,12 @@ fun InventoryScreen(
 
                     Divider(color = Slate100)
 
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         // Warehouse selector dropdown
-                        Box(modifier = Modifier.weight(1.2f)) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
                             ExposedDropdownMenuBox(
                                 expanded = warehouseDropdownExpanded,
                                 onExpandedChange = { warehouseDropdownExpanded = it }
@@ -130,6 +136,7 @@ fun InventoryScreen(
                                     value = if (selectedWarehouseId == "ALL") "Tất cả kho & xe" else "${currentWh?.id} - ${currentWh?.name}",
                                     onValueChange = {},
                                     readOnly = true,
+                                    singleLine = true,
                                     label = { Text("Lọc theo vị trí kho / xe") },
                                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = warehouseDropdownExpanded) },
                                     modifier = Modifier
@@ -181,7 +188,7 @@ fun InventoryScreen(
                                 }
                             },
                             singleLine = true,
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(8.dp)
                         )
                     }
@@ -235,22 +242,31 @@ fun InventoryScreen(
                                     text = p?.name ?: "Sản phẩm",
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Slate900
+                                    color = Slate900,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
 
                             Spacer(modifier = Modifier.height(6.dp))
 
                             Row(
+                                modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
                                     Icon(Icons.Outlined.Warehouse, contentDescription = null, tint = Slate400, modifier = Modifier.size(14.dp))
                                     Text(
                                         text = "${wh?.id ?: inv.warehouseId} - ${wh?.name ?: ""}",
                                         fontSize = 12.sp,
-                                        color = Slate600
+                                        color = Slate600,
+                                        maxLines = 1,
+                                        modifier = Modifier.basicMarquee()
                                     )
                                 }
                                 if (wh != null) {
