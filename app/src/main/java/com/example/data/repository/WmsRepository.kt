@@ -174,8 +174,9 @@ class WmsRepository private constructor(private val context: Context) {
             _outputOrders.value = loadOutputOrdersJson()
             _transfers.value = loadTransfersJson()
 
-            val savedUsername = prefs.getString("current_username", null)
-            _currentUser.value = _users.value.find { it.username == savedUsername }
+            // Always require fresh login on app start
+            prefs.edit().remove("current_username").apply()
+            _currentUser.value = null
         } catch (e: Exception) {
             resetData()
         }
@@ -191,7 +192,7 @@ class WmsRepository private constructor(private val context: Context) {
         _inputOrders.value = getDefaultInputOrders()
         _outputOrders.value = getDefaultOutputOrders()
         _transfers.value = getDefaultTransfers()
-        _currentUser.value = _users.value.first() // default to admin
+        _currentUser.value = null // Start with no user (require login)
 
         saveAll()
         prefs.edit().putBoolean("has_initialized", true).apply()
