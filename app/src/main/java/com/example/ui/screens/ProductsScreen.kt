@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -128,7 +129,7 @@ fun ProductsScreen(
                         OutlinedTextField(
                             value = sku,
                             onValueChange = { if (!isEditMode) sku = it },
-                            label = { Text("Mã SKU") },
+                            label = { Text("Mã SKU", maxLines = 1, modifier = Modifier.basicMarquee()) },
                             placeholder = { Text("SKU-88, SKU-99...") },
                             enabled = !isEditMode,
                             singleLine = true,
@@ -137,25 +138,25 @@ fun ProductsScreen(
                         )
 
                         OutlinedTextField(
-                            value = productName,
-                            onValueChange = { productName = it },
-                            label = { Text("Tên sản phẩm / Quy cách") },
-                            placeholder = { Text("Thùng Carton X...") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1.8f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-
-                        OutlinedTextField(
                             value = productUnit,
                             onValueChange = { productUnit = it },
-                            label = { Text("Đơn vị tính") },
+                            label = { Text("Đơn vị tính", maxLines = 1, modifier = Modifier.basicMarquee()) },
                             placeholder = { Text("Thùng, Cái, Bộ...") },
                             singleLine = true,
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp)
                         )
                     }
+
+                    OutlinedTextField(
+                        value = productName,
+                        onValueChange = { productName = it },
+                        label = { Text("Tên sản phẩm / Quy cách", maxLines = 1, modifier = Modifier.basicMarquee()) },
+                        placeholder = { Text("Thùng Carton X...") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
                     Button(
                         onClick = {
@@ -174,53 +175,60 @@ fun ProductsScreen(
                         enabled = sku.isNotBlank() && productName.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
                         shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (isEditMode) "Cập nhật sản phẩm" else "Lưu sản phẩm", fontWeight = FontWeight.Bold)
+                        Text(
+                            text = if (isEditMode) "Cập nhật sản phẩm" else "Lưu sản phẩm vào danh mục", 
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
                     }
                 }
             }
         }
 
-        // Search & List section
+        // Search & List section (Combined to reduce gaps)
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "DANH MỤC SẢN PHẨM & TỔNG TỒN HỆ THỐNG (${filteredProducts.size})",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Slate700
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "DANH MỤC SẢN PHẨM (${filteredProducts.size})",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Slate700,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f).basicMarquee()
+                    )
+                }
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Tìm theo SKU, tên sản phẩm, đơn vị tính...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
                 )
             }
-        }
-
-        item {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Tìm theo SKU, tên sản phẩm, đơn vị tính...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
-                        }
-                    }
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                )
-            )
         }
 
         // Products List
@@ -261,12 +269,15 @@ fun ProductsScreen(
                                     text = product.sku,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = PrimaryBlue
+                                    color = PrimaryBlue,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                                 StatusBadge(
                                     text = product.unit,
                                     bgColor = Slate100,
-                                    textColor = Slate700
+                                    textColor = Slate800,
+                                    modifier = Modifier.padding(start = 4.dp)
                                 )
                             }
                             Spacer(modifier = Modifier.height(4.dp))
@@ -274,24 +285,30 @@ fun ProductsScreen(
                                 text = product.name,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Slate900
+                                color = Slate900,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
                             )
 
                             Spacer(modifier = Modifier.height(6.dp))
                             Row(
+                                modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 Text(
                                     text = "Tổng tồn hệ thống:",
                                     fontSize = 11.sp,
-                                    color = Slate500
+                                    color = Slate500,
+                                    maxLines = 1
                                 )
                                 Text(
                                     text = "$totalQty ${product.unit}",
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (totalQty > 0) Emerald700 else Amber700
+                                    color = if (totalQty > 0) Emerald700 else Amber700,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                         }

@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -126,64 +127,82 @@ fun WarehousesScreen(
                         }
                     }
 
-                    Row(
+                    OutlinedTextField(
+                        value = warehouseId,
+                        onValueChange = { if (!isEditMode) warehouseId = it },
+                        label = { Text("Mã kho / Bãi", maxLines = 1, modifier = Modifier.basicMarquee()) },
+                        placeholder = { Text("KH001, KH002, BAI-01...") },
+                        enabled = !isEditMode,
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = warehouseId,
-                            onValueChange = { if (!isEditMode) warehouseId = it },
-                            label = { Text("Mã kho / Bãi") },
-                            placeholder = { Text("KH001, KH002, BAI-01...") },
-                            enabled = !isEditMode,
-                            singleLine = true,
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
-                        OutlinedTextField(
-                            value = warehouseName,
-                            onValueChange = { warehouseName = it },
-                            label = { Text("Tên kho / Vị trí") },
-                            placeholder = { Text("Kho Tổng Miền Nam...") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1.8f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                    }
-
-                    Row(
+                    OutlinedTextField(
+                        value = warehouseName,
+                        onValueChange = { warehouseName = it },
+                        label = { Text("Tên kho / Vị trí", maxLines = 1, modifier = Modifier.basicMarquee()) },
+                        placeholder = { Text("Kho Tổng Miền Nam...") },
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Type Selection
-                        Column(modifier = Modifier.weight(1.2f)) {
-                            Text("Loại kho:", fontSize = 11.sp, color = Slate600, fontWeight = FontWeight.SemiBold)
+                        shape = RoundedCornerShape(8.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = warehouseLocation,
+                        onValueChange = { warehouseLocation = it },
+                        label = { Text("Địa chỉ / Vị trí địa lý", maxLines = 1, modifier = Modifier.basicMarquee()) },
+                        placeholder = { Text("TP. Hồ Chí Minh, Bình Dương...") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+
+                    // Type Selection (Moved to its own row for full width)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text("Phân loại kho:", fontSize = 12.sp, color = Slate600, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        // We have 4 types: KHO_TONG, KHO_CHI_NHANH, BAI_XE, VAN_CHUYEN
+                        // Split into 2 rows if needed or just use a horizontal scrollable row? 
+                        // Let's use a Column with FlowRow-like behavior or just a Row with weights.
+                        // Given 4 items, 2x2 grid or single scrollable row is best. 
+                        // For simplicity and alignment, let's use a Row with scroll if needed, or 2 rows.
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                WarehouseType.values().forEach { t ->
+                                listOf(WarehouseType.KHO_TONG, WarehouseType.KHO_CHI_NHANH).forEach { t ->
                                     FilterChip(
+                                        modifier = Modifier.weight(1f),
                                         selected = warehouseType == t,
                                         onClick = { warehouseType = t },
-                                        label = { Text(t.displayName, fontSize = 9.sp) },
-                                        modifier = Modifier.padding(horizontal = 1.dp)
+                                        label = { 
+                                            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                                Text(t.displayName, fontSize = 11.sp, maxLines = 1) 
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                listOf(WarehouseType.BAI_XE, WarehouseType.VAN_CHUYEN).forEach { t ->
+                                    FilterChip(
+                                        modifier = Modifier.weight(1f),
+                                        selected = warehouseType == t,
+                                        onClick = { warehouseType = t },
+                                        label = { 
+                                            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                                Text(t.displayName, fontSize = 11.sp, maxLines = 1) 
+                                            }
+                                        }
                                     )
                                 }
                             }
                         }
-
-                        OutlinedTextField(
-                            value = warehouseLocation,
-                            onValueChange = { warehouseLocation = it },
-                            label = { Text("Địa chỉ / Vị trí địa lý") },
-                            placeholder = { Text("TP. Hồ Chí Minh, Bình Dương...") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
                     }
 
                     Button(
@@ -204,53 +223,60 @@ fun WarehousesScreen(
                         enabled = warehouseId.isNotBlank() && warehouseName.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
                         shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (isEditMode) "Cập nhật kho" else "Lưu thông tin kho", fontWeight = FontWeight.Bold)
+                        Text(
+                            text = if (isEditMode) "Cập nhật thông tin kho" else "Lưu thông tin kho mới", 
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
                     }
                 }
             }
         }
 
-        // Section header & Search
+        // Section header & Search (Combined to reduce gaps)
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "DANH SÁCH KHO & BÃI (${filteredWarehouses.size})",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Slate700
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "DANH SÁCH KHO & BÃI (${filteredWarehouses.size})",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Slate700,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f).basicMarquee()
+                    )
+                }
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Tìm theo mã kho, tên kho, loại kho, địa chỉ...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
                 )
             }
-        }
-
-        item {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Tìm theo mã kho, tên kho, loại kho, địa chỉ...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Slate400) },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Xóa", tint = Slate400)
-                        }
-                    }
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                )
-            )
         }
 
         // Warehouse cards
@@ -310,13 +336,25 @@ fun WarehousesScreen(
                         text = wh.name,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Slate900
+                        color = Slate900,
+                        maxLines = 1,
+                        modifier = Modifier.basicMarquee()
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically, 
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
                         Icon(Icons.Outlined.LocationOn, contentDescription = null, tint = Slate400, modifier = Modifier.size(14.dp))
-                        Text(text = wh.location, fontSize = 11.sp, color = Slate600)
+                        Text(
+                            text = wh.location, 
+                            fontSize = 11.sp, 
+                            color = Slate600,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
