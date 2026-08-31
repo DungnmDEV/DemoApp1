@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -197,36 +198,44 @@ fun UsersRolesScreen(
                         )
                     }
 
-                    Row(
+                    OutlinedTextField(
+                        value = fullName,
+                        onValueChange = { fullName = it },
+                        label = { Text("Họ và tên") },
+                        placeholder = { Text("Nguyễn Văn Cường...") },
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        OutlinedTextField(
-                            value = fullName,
-                            onValueChange = { fullName = it },
-                            label = { Text("Họ và tên") },
-                            placeholder = { Text("Nguyễn Văn Cường...") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1.2f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
-                        // Role Selection
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Vai trò:", fontSize = 11.sp, color = Slate600, fontWeight = FontWeight.SemiBold)
-                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                FilterChip(
-                                    selected = selectedRole == UserRole.MANAGER,
-                                    onClick = { selectedRole = UserRole.MANAGER },
-                                    label = { Text("Quản lý kho/xe", fontSize = 10.sp) }
-                                )
-                                FilterChip(
-                                    selected = selectedRole == UserRole.ADMIN,
-                                    onClick = { selectedRole = UserRole.ADMIN },
-                                    label = { Text("Quản trị viên", fontSize = 10.sp) }
-                                )
-                            }
+                    // Role Selection (Moved to its own row for full width to prevent vertical wrapping)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text("Vai trò người dùng:", fontSize = 12.sp, color = Slate600, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            FilterChip(
+                                modifier = Modifier.weight(1f),
+                                selected = selectedRole == UserRole.MANAGER,
+                                onClick = { selectedRole = UserRole.MANAGER },
+                                label = { 
+                                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        Text("Quản lý kho/xe", fontSize = 12.sp, maxLines = 1) 
+                                    }
+                                }
+                            )
+                            FilterChip(
+                                modifier = Modifier.weight(1f),
+                                selected = selectedRole == UserRole.ADMIN,
+                                onClick = { selectedRole = UserRole.ADMIN },
+                                label = { 
+                                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        Text("Quản trị viên", fontSize = 12.sp, maxLines = 1) 
+                                    }
+                                }
+                            )
                         }
                     }
 
@@ -300,11 +309,16 @@ fun UsersRolesScreen(
                         enabled = username.isNotBlank() && password.isNotBlank() && fullName.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
                         shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (isEditMode) "Cập nhật người dùng" else "Thêm người dùng & cấp quyền", fontWeight = FontWeight.Bold)
+                        Text(
+                            text = if (isEditMode) "Cập nhật người dùng" else "Thêm người dùng & cấp quyền", 
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
                     }
                 }
             }
