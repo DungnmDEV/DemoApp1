@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -172,13 +173,16 @@ fun DashboardScreen(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     // KPI 3: Đơn hàng
                     Card(
                         modifier = Modifier
                             .weight(1f)
+                            .fillMaxHeight()
                             .clip(RoundedCornerShape(16.dp))
                             .clickable { onNavigate(WmsScreen.INPUT_ORDERS) },
                         shape = RoundedCornerShape(16.dp),
@@ -187,32 +191,36 @@ fun DashboardScreen(
                         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
                         Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .fillMaxHeight(),
+                            verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(
-                                text = "ĐƠN HÀNG",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Slate500,
-                                letterSpacing = 0.5.sp
-                            )
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.Bottom,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "$totalOrders",
-                                    fontSize = 24.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Slate900
+                                    text = "ĐƠN HÀNG",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Slate500,
+                                    letterSpacing = 0.5.sp
                                 )
-                                Text(
-                                    text = "Tháng này",
-                                    fontSize = 10.sp,
-                                    color = Slate400
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.Bottom,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = "$totalOrders",
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Slate900
+                                    )
+                                    Text(
+                                        text = "Tháng này",
+                                        fontSize = 10.sp,
+                                        color = Slate400
+                                    )
+                                }
                             }
                             // Progress bar
                             Box(
@@ -237,6 +245,7 @@ fun DashboardScreen(
                     Card(
                         modifier = Modifier
                             .weight(1f)
+                            .fillMaxHeight()
                             .clip(RoundedCornerShape(16.dp))
                             .clickable { onNavigate(WmsScreen.INVENTORY) },
                         shape = RoundedCornerShape(16.dp),
@@ -245,33 +254,37 @@ fun DashboardScreen(
                         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
                         Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .fillMaxHeight(),
+                            verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(
-                                text = "TỒN KHO",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Slate500,
-                                letterSpacing = 0.5.sp
-                            )
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.Bottom,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = totalStock.toString(),
-                                    fontSize = if (totalStock > 9999) 20.sp else 24.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Slate900
+                                    text = "TỒN KHO",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Slate500,
+                                    letterSpacing = 0.5.sp
                                 )
-                                Text(
-                                    text = "SKU",
-                                    fontSize = 10.sp,
-                                    color = Slate400,
-                                    fontWeight = FontWeight.Bold
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.Bottom,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = totalStock.toString(),
+                                        fontSize = if (totalStock > 9999) 20.sp else 24.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Slate900
+                                    )
+                                    Text(
+                                        text = "SKU",
+                                        fontSize = 10.sp,
+                                        color = Slate400,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
                             Text(
                                 text = "${warehouses.size} kho & bãi xe",
@@ -437,6 +450,7 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Row(
+                                modifier = Modifier.weight(1f),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
@@ -456,7 +470,7 @@ fun DashboardScreen(
                                     )
                                 }
 
-                                Column {
+                                Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = act.id,
                                         fontSize = 12.sp,
@@ -466,11 +480,14 @@ fun DashboardScreen(
                                     Text(
                                         text = act.title,
                                         fontSize = 10.sp,
-                                        color = Slate500
+                                        color = Slate500,
+                                        maxLines = 1,
+                                        modifier = Modifier.basicMarquee()
                                     )
                                 }
                             }
 
+                            Spacer(modifier = Modifier.width(8.dp))
                             act.statusBadge()
                         }
 

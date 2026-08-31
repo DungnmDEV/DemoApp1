@@ -1,6 +1,7 @@
 package com.example.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -47,6 +48,7 @@ fun WmsHeader(
         ) {
             // Left: Hamburger Menu + Brand Logo + Title
             Row(
+                modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -78,7 +80,7 @@ fun WmsHeader(
                     )
                 }
 
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -87,21 +89,27 @@ fun WmsHeader(
                             text = "QL Kho Pro",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = Color.White,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
                         )
                         if (title != "Tổng quan" && title != "Dashboard") {
                             Text(
                                 text = "• $title",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = PrimaryBlueLight
+                                color = PrimaryBlueLight,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
                             )
                         }
                     }
                     Text(
                         text = "Hệ thống quản lý kho & vận chuyển",
                         fontSize = 10.sp,
-                        color = Slate400
+                        color = Slate400,
+                        maxLines = 1,
+                        modifier = Modifier.basicMarquee()
                     )
                 }
             }
