@@ -564,14 +564,18 @@ fun TransfersScreen(
                                 text = "Nguồn: ${fromWh?.id ?: trf.fromId} - ${fromWh?.name ?: ""}",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Rose600
+                                color = Rose600,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f).basicMarquee()
                             )
                             Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Slate400, modifier = Modifier.size(14.dp))
                             Text(
                                 text = "Đích: ${toWh?.id ?: trf.toId} - ${toWh?.name ?: ""}",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Emerald700
+                                color = Emerald700,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f).basicMarquee()
                             )
                         }
 

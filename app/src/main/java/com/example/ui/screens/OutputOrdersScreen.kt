@@ -525,14 +525,18 @@ fun OutputOrdersScreen(
                                 text = "Từ: ${wh?.id ?: order.warehouseId} - ${wh?.name ?: ""}",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = PrimaryBlue
+                                color = PrimaryBlue,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f).basicMarquee()
                             )
                             Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Slate400, modifier = Modifier.size(14.dp))
                             Text(
                                 text = "Đến: ${cust?.name ?: order.customerId}",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Slate900
+                                color = Slate900,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f).basicMarquee()
                             )
                         }
 
