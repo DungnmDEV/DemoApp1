@@ -1,0 +1,6 @@
+{
+  "name": "QL Kho Pro",
+  "description": "Hệ thống quản lý kho & vận chuyển",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:translateX="18"
+        android:translateY="18"
+        android:scaleX="3.0"
+        android:scaleY="3.0">
+        <!-- Warehouse building / package logistics icon -->
+        <path
+            android:fillColor="#38BDF8"
+            android:pathData="M12,2L1,7l11,5 9,-4.09V17h2V7L12,2z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M12,14.53L4.53,11.14 3,11.83v6.17l9,4.09 9,-4.09v-6.17l-1.53,-0.69L12,14.53z" />
+        <path
+            android:fillColor="#F59E0B"
+            android:pathData="M7,14.5l5,2.27 5,-2.27v3.5l-5,2.27 -5,-2.27z" />
+    </group>
+</vector>
