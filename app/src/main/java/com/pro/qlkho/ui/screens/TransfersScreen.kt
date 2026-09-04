@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -411,7 +413,7 @@ fun TransfersScreen(
                         ) {
                             Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("+ Thêm sản phẩm khác", fontSize = 12.sp)
+                            Text("Thêm sản phẩm khác", fontSize = 12.sp)
                         }
 
                         Button(
@@ -441,16 +443,21 @@ fun TransfersScreen(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
                         text = "DANH SÁCH PHIẾU LUÂN CHUYỂN (${filteredTransfers.size})",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Slate700
+                        color = Slate700,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f).basicMarquee()
                     )
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Row(
+                        modifier = Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
                         FilterChip(
                             selected = filterStatus == null,
                             onClick = { filterStatus = null },
@@ -459,17 +466,17 @@ fun TransfersScreen(
                         FilterChip(
                             selected = filterStatus == TransferStatus.PENDING,
                             onClick = { filterStatus = TransferStatus.PENDING },
-                            label = { Text("Đang chuyển", fontSize = 11.sp) }
+                            label = { Text("Đang chuyển", fontSize = 11.sp, maxLines = 1) }
                         )
                         FilterChip(
                             selected = filterStatus == TransferStatus.COMPLETED,
                             onClick = { filterStatus = TransferStatus.COMPLETED },
-                            label = { Text("Hoàn thành", fontSize = 11.sp) }
+                            label = { Text("Hoàn thành", fontSize = 11.sp, maxLines = 1) }
                         )
                         FilterChip(
                             selected = filterStatus == TransferStatus.CANCELLED,
                             onClick = { filterStatus = TransferStatus.CANCELLED },
-                            label = { Text("Đã hủy", fontSize = 11.sp) }
+                            label = { Text("Đã hủy", fontSize = 11.sp, maxLines = 1) }
                         )
                     }
                 }
