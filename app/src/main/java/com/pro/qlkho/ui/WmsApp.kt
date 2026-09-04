@@ -30,9 +30,18 @@ data class BottomNavDestination(
 
 @Composable
 fun WmsApp(
-    viewModel: WmsViewModel = viewModel()
+    viewModel: WmsViewModel = viewModel(),
+    ssoToken: String? = null,
+    ssoUsername: String? = null
 ) {
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
+
+    // Handle SSO login if provided and no current user
+    LaunchedEffect(ssoToken, ssoUsername) {
+        if (ssoToken != null && currentUser == null) {
+            viewModel.loginWithSso(ssoToken, ssoUsername)
+        }
+    }
     val currentScreen by viewModel.currentScreen.collectAsStateWithLifecycle()
     val modalState by viewModel.modalState.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()

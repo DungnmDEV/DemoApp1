@@ -223,6 +223,31 @@ class WmsRepository private constructor(private val context: Context) {
         }
     }
 
+    /**
+     * Internal SSO Login for Synergy Ecosystem
+     * Supports specific mock tokens for demo accounts
+     */
+    fun loginWithSso(token: String, username: String? = null): Result<User> {
+        val targetUsername = when {
+            token == "mock_admin_token_2026" -> "admin"
+            token == "mock_token_demo" -> "qlkho1"
+            !username.isNullOrBlank() && token.startsWith("mock_token_") -> username
+            else -> null
+        }
+
+        val user = targetUsername?.let { name ->
+            _users.value.find { it.username.equals(name, ignoreCase = true) }
+        }
+
+        return if (user != null) {
+            _currentUser.value = user
+            prefs.edit().putString("current_username", user.username).apply()
+            Result.success(user)
+        } else {
+            Result.failure(Exception("Token không hợp lệ hoặc không tìm thấy người dùng liên kết."))
+        }
+    }
+
     fun logout() {
         _currentUser.value = null
         prefs.edit().remove("current_username").apply()

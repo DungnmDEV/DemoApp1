@@ -97,6 +97,21 @@ class WmsViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun loginWithSso(token: String, username: String? = null) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            delay(200)
+            val result = repository.loginWithSso(token, username)
+            _isLoading.value = false
+            result.onSuccess {
+                _currentScreen.value = WmsScreen.DASHBOARD
+                emitToast("✓ SSO: Đã liên kết tài khoản ${it.username} từ Synergy")
+            }.onFailure {
+                emitToast("Lỗi liên kết: ${it.message}")
+            }
+        }
+    }
+
     fun logout() {
         repository.logout()
         _currentScreen.value = WmsScreen.DASHBOARD
